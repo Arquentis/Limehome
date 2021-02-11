@@ -1,11 +1,11 @@
 {
-    "fileServerFolder": ".",
+    "fileServerFolder": "../src/",
     "fixturesFolder": "./src/fixtures",
     "integrationFolder": "./src/integration",
     "pluginsFile": "./src/plugins/index",
     "supportFile": false,
     "video": true,
-    "videosFolder": "../dist/cypress/{your-project}-e2e/videos",
-    "screenshotsFolder": "../dist/cypress/{your-project}-e2e/screenshots",
+    "videosFolder": "../dist/cypress/limehome-web-client-e2e/videos",
+    "screenshotsFolder": "../dist/cypress/limehome-web-client-e2e/screenshots",
     "chromeWebSecurity": false
 }

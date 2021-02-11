@@ -1,0 +1,16 @@
+<div class="nav">
+  <input type="checkbox" id="nav-check" #menuCheckbox />
+  <a routerLink="/" class="nav-logo">
+    <img src="../assets/images/svg/logo.svg" alt="Limehome" />
+  </a>
+  <div class="nav-btn">
+    <label for="nav-check">
+      <span class="top"></span>
+      <span class="bottom"></span>
+    </label>
+  </div>
+  <div class="nav-links" (click)="uncheckMenu()">
+    <a href="https://www.limehome.com/" target="_blank">Limehome Page</a>
+    <a  [routerLink]="'about-us'">About Us</a>
+  </div>
+</div>

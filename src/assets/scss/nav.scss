@@ -1,0 +1,96 @@
+.nav {
+  display: flex;
+  height: 50px;
+  width: 100%;
+  background-color: #ebeae6;
+  position: relative;
+
+  & .nav-logo {
+    display: inline-flex;
+    flex: 1;
+    padding: 10px 10px;
+    & img {
+      height: 100%;
+    }
+  }
+  & input {
+    display: none;
+
+    &:checked ~ .nav-links {
+      height: calc(100vh - 50px);
+      overflow-y: auto;
+    }
+    &:checked ~ .nav-btn {
+      & label {
+        & span {
+          position: absolute;
+          transition: all 0.3s ease-in;
+          &.top {
+            margin-top: 3px;
+            transform: rotate(-45deg);
+          }
+          &.bottom {
+            margin-top: -2px;
+            transform: rotate(-135deg);
+          }
+        }
+      }
+    }
+  }
+  & .nav-btn {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    & label {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      padding: 15px;
+
+      & span {
+        display: block;
+        width: 25px;
+        height: 10px;
+        border-top: 2px solid #545453;
+      }
+    }
+
+    @media (min-width: 600px) {
+      display: none;
+    }
+  }
+  & .nav-links {
+    display: block;
+
+    & a {
+      display: inline-block;
+      padding: 10px 10px;
+      text-decoration: none;
+      font-size: 1.2rem;
+      color: #545453;
+
+      :hover {
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    @media (max-width: 600px) {
+      position: absolute;
+      display: block;
+      width: 100%;
+      background-color: #ebeae6;
+      height: 0px;
+      transition: all 0.3s ease-in;
+      overflow-y: hidden;
+      top: 50px;
+      left: 0px;
+
+      & a {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+}
