@@ -1,0 +1,22 @@
+<div class="list-item">
+  <div class="content">
+    <div class="image">
+      <div
+        class="image-bg"
+        style="background-image: url('{{ imageUrl }}');"
+      ></div>
+    </div>
+    <div class="description">
+      <h3>{{ title }}</h3>
+      <p>{{ description }}</p>
+      <span>{{ price }}</span>
+      <p>Designs may vary</p>
+    </div>
+  </div>
+  <button
+    class="orange"
+    (click)="onBookSelect.emit({ placeResult: placeResult, amount: amount })"
+  >
+    Book
+  </button>
+</div>

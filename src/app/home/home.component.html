@@ -1,0 +1,6 @@
+<div id="map"></div>
+<div class="hor-scroll">
+  <div class="listing-container" #container *ngIf="placeResults.length > 0">
+    <list-item *ngFor="let place of placeResults" [item]="place" (onBookSelect)="confirmBooking($event)"></list-item>
+  </div>
+</div>

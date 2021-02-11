@@ -7,6 +7,7 @@ import { NavBarComponent } from './layout/nav-bar/nav-bar.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './layout/page-not-found/page-not-found.component';
+import { ListItemComponent } from './home/list-item/list-item.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { PageNotFoundComponent } from './layout/page-not-found/page-not-found.co
     NavBarComponent,
     AboutUsComponent,
     HomeComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ListItemComponent
   ],
   imports: [
     BrowserModule,
