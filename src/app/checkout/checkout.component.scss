@@ -1,0 +1,48 @@
+hr {
+  border-color: #ebeae6;
+  border-style: solid;
+}
+
+.text-centered {
+  text-align: center;
+  width: 100%;
+}
+
+.form-container {
+  width: 100%;
+  padding: 10px;
+
+  .form-body {
+    .form-group {
+      margin-bottom: 15px;
+      .form-control-label {
+        display: block;
+        margin-right: 20px;
+        font-weight: 400;
+        font-size: 15px;
+      }
+      .form-control {
+        width: 100%;
+        border: 1px solid #e3e3e3;
+        font-weight: 400;
+        font-size: 15px;
+        padding: 10px 20px;
+      }
+      .has-error {
+        color: red;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .form-footer {
+    margin-top: 20px;
+    width: 100%;
+
+    button {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+    }
+  }
+}

@@ -13,10 +13,5 @@
       <p>Designs may vary</p>
     </div>
   </div>
-  <button
-    class="orange"
-    (click)="onBookSelect.emit({ placeResult: placeResult, amount: amount })"
-  >
-    Book
-  </button>
+  <button class="orange" (click)="onBookSelect.emit({ id: id })">Book</button>
 </div>

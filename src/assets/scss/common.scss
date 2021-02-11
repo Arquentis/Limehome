@@ -1,0 +1,12 @@
+button {
+  border: 0;
+
+  &.orange {
+    color: white;
+    background-color: #f7941d;
+  }
+  &:disabled {
+    background-color: #ffc37b;
+    color: white;
+  }
+}

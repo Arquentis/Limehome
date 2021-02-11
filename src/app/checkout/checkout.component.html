@@ -1,0 +1,98 @@
+<div class="list-item" *ngIf="!!item">
+  <div class="content">
+    <div class="image">
+      <div
+        class="image-bg"
+        style="background-image: url('{{ imageUrl }}');"
+      ></div>
+    </div>
+    <div class="description">
+      <h3>{{ title }}</h3>
+      <p>{{ description }}</p>
+      <span>{{ price }}</span>
+      <p>Designs may vary</p>
+    </div>
+  </div>
+</div>
+<hr />
+<div class="form-container" *ngIf="!this.saved">
+  <form [formGroup]="bookingForm" (submit)="save()">
+    <div class="form-body">
+      <div class="form-group">
+        <label class="form-control-label" for="dates">Dates*</label>
+        <input
+          class="form-control"
+          type="text"
+          id="dates"
+          formControlName="dates"
+        />
+        <span
+          *ngIf="datesRef.touched && datesRef.hasError('required')"
+          class="has-error"
+          >This field is required</span
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-control-label" for="firstName">First Name*</label>
+        <input
+          class="form-control"
+          type="text"
+          id="firstName"
+          name="firstName"
+          formControlName="firstName"
+        />
+        <span
+          *ngIf="firstNameRef.touched && firstNameRef.hasError('required')"
+          class="has-error"
+          >This field is required</span
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-control-label" for="lastName">Last Name*</label>
+        <input
+          class="form-control"
+          type="text"
+          id="lastName"
+          name="lastName"
+          formControlName="lastName"
+        />
+        <span
+          *ngIf="lastNameRef.touched && lastNameRef.hasError('required')"
+          class="has-error"
+          >This field is required</span
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-control-label" for="emailAddress"
+          >Email Address*</label
+        >
+        <input
+          class="form-control"
+          type="email"
+          id="emailAddress"
+          name="emailAddress"
+          formControlName="emailAddress"
+        />
+        <span
+          *ngIf="
+            emailAddressRef.touched && emailAddressRef.hasError('required')
+          "
+          class="has-error"
+          >This field is required</span
+        >
+        <span
+          *ngIf="emailAddressRef.touched && emailAddressRef.hasError('email')"
+          class="has-error"
+          >You must enter a valid email address</span
+        >
+      </div>
+    </div>
+    <div class="form-footer">
+      <button type="submit" [disabled]="!bookingForm.valid" class="orange">Book Now</button>
+    </div>
+  </form>
+</div>
+<div class="text-centered" *ngIf="this.saved">
+  <p>Thank you for booking!</p>
+  <p><a routerLink="/">Go to home page</a></p>
+</div>

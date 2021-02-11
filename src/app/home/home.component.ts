@@ -7,6 +7,16 @@ import {
 } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { environment } from '../../environments/environment';
+import * as faker from 'faker';
+import { Router } from '@angular/router';
+import { AppConsts, SelectedBooking } from '../app.consts';
+interface PlaceItem {
+  id: string;
+  placeResult: google.maps.places.PlaceResult;
+  marker: google.maps.Marker;
+  amount: number;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -19,11 +29,12 @@ export class HomeComponent implements OnInit {
   private placesService: google.maps.places.PlacesService;
   private markerIcon = '/assets/images/svg/home-icon.svg';
   private markerIconActive = '/assets/images/svg/home-icon-active.svg';
-  private markers: google.maps.Marker[] = [];
-  private selectedResult: google.maps.places.PlaceResult;
-  placeResults: google.maps.places.PlaceResult[] = [];
+  // private markers: google.maps.Marker[] = [];
+  private selectedItem: PlaceItem;
 
-  constructor(private _cdr: ChangeDetectorRef) {
+  placeItems: PlaceItem[] = [];
+
+  constructor(private _cdr: ChangeDetectorRef, private _router: Router) {
     const { googleApiKey } = environment;
     this.loader = new Loader({
       apiKey: googleApiKey,
@@ -50,43 +61,73 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  selectPlace(place: google.maps.places.PlaceResult) {
-    this.selectedResult = place;
+  tryGetSelectedBooking() {
+    const data = localStorage.getItem(AppConsts.selectedBooking);
+    if (data) {
+      const item: SelectedBooking = JSON.parse(data);
+      if (item) {
+        this.selectPlace(item.id);
+      } else if (this.placeItems.length > 0) {
+        this.selectPlace(this.placeItems[0].id);
+      }
+    }
+  }
 
-    this.markers.forEach((m) => {
-      const pos = m.getPosition();
+  selectPlace(placeid: string) {
+    this.selectedItem = placeid
+      ? this.placeItems.find((x) => x.id == placeid)
+      : null;
+
+    this.placeItems.forEach((m) => {
+      const pos = m.marker.getPosition();
       if (
-        this.selectedResult &&
-        this.selectedResult.geometry.location === pos
+        this.selectedItem &&
+        this.selectedItem.placeResult.geometry.location === pos
       ) {
-        m.setIcon(this.markerIconActive);
+        m.marker.setIcon(this.markerIconActive);
       } else {
-        m.setIcon(this.markerIcon);
+        m.marker.setIcon(this.markerIcon);
       }
     });
-    if (place) {
-      this.map.panTo(place.geometry.location);
+    if (this.selectedItem) {
+      this.map.panTo(this.selectedItem.placeResult.geometry.location);
     }
     setTimeout(() => {
-      if (this.selectedResult) {
-        const index = this.placeResults.findIndex(
-          (x) => x === this.selectedResult
-        );
+      if (this.selectedItem) {
+        const index = this.placeItems.findIndex((x) => x === this.selectedItem);
         const element = this.listingContainer.nativeElement.children[index];
         element.scrollIntoView();
       }
     }, 200);
   }
 
-  confirmBooking({ placeResult, amount }) {
-    console.log('show confirm modal', {
-      placeResult,
-      amount,
-    });
+  confirmBooking({ id }) {
+    const selectedItem = this.placeItems.find((x) => x.id === id);
+
+    if (selectedItem) {
+      const { photos, name, vicinity } = selectedItem.placeResult;
+      const selectedBooking: SelectedBooking = {
+        id: id,
+        amount: selectedItem.amount,
+        name: name,
+        photo:
+          photos && photos.length > 0
+            ? photos[0].getUrl({})
+            : 'https://via.placeholder.com/80/120',
+        description: vicinity,
+      };
+      localStorage.setItem(
+        AppConsts.selectedBooking,
+        JSON.stringify(selectedBooking)
+      );
+      this._router.navigate(['/checkout']);
+    } else {
+      alert('Something went wrong');
+    }
   }
 
   createMarker(place: google.maps.places.PlaceResult): google.maps.Marker {
-    if (!place.geometry || !place.geometry.location) return;
+    if (!place.geometry || !place.geometry.location) return null;
 
     const marker = new google.maps.Marker({
       map: this.map,
@@ -95,13 +136,13 @@ export class HomeComponent implements OnInit {
     });
 
     google.maps.event.addListener(marker, 'click', () => {
-      if (this.selectedResult && this.selectedResult === place) {
+      if (this.selectedItem && this.selectedItem.id === place.place_id) {
         this.selectPlace(null);
       } else {
-        this.selectPlace(place);
+        this.selectPlace(place.place_id);
       }
     });
-    this.markers.push(marker);
+    return marker;
   }
 
   searchCurrentLocation(): void {
@@ -109,7 +150,7 @@ export class HomeComponent implements OnInit {
     this.placesService.nearbySearch(
       {
         location: pos,
-        radius: 1000,
+        radius: 1500,
         keyword: 'hotel',
         types: ['establishment'],
       },
@@ -118,29 +159,38 @@ export class HomeComponent implements OnInit {
         status: google.maps.places.PlacesServiceStatus
       ) => {
         if (status === 'OK') {
-          this.selectPlace(null);
-          this.placeResults = results;
-          console.log('placeResults', this.placeResults);
-          this.showMarkers(results);
-        } else {
-          this.placeResults = [];
-          this.selectPlace(null);
-          console.log('status not ok', { results, status });
+          this.addPlaces(results);
+          // this.showMarkers(results);
         }
         this._cdr.detectChanges();
       }
     );
   }
 
-  showMarkers(results: google.maps.places.PlaceResult[]) {
-    for (let i = 0; i < this.markers.length; i++) {
-      const marker = this.markers[i];
-      marker.setMap(null);
+  addPlaces(results: google.maps.places.PlaceResult[]) {
+    const newResults = results.filter((x) => {
+      const index = this.placeItems.findIndex((p) => p.id === x.place_id);
+      return index < 0;
+    });
+    newResults.forEach((x) => {
+      const newPlace: PlaceItem = {
+        id: x.place_id,
+        amount: faker.random.number({ min: 50, max: 300 }),
+        marker: this.createMarker(x),
+        placeResult: x,
+      };
+      this.placeItems.push(newPlace);
+    });
+    if (!this.selectedItem) {
+      this.tryGetSelectedBooking();
+      // this.selectPlace(this.placeItems[0].id);
     }
-    results.map((r) => this.createMarker(r));
-    if (!this.selectedResult && this.placeResults.length > 0) {
-      this.selectPlace(this.placeResults[0]);
-    }
+
+    // for (let i = 0; i < this.markers.length; i++) {
+    //   const marker = this.markers[i];
+    //   marker.setMap(null);
+    // }
+    // this.markers = [];
   }
 
   ngOnInit(): void {

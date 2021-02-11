@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import * as faker from 'faker';
 
 @Component({
   selector: 'list-item',
@@ -8,12 +7,11 @@ import * as faker from 'faker';
 })
 export class ListItemComponent implements OnInit {
   @Input('item') placeResult: google.maps.places.PlaceResult;
-  amount: number;
+  @Input('amount') amount: number;
+  @Input('id') id: string;
   @Output() onBookSelect = new EventEmitter<google.maps.places.PlaceResult>();
 
-  constructor() {
-    this.amount = faker.random.number({ min: 50, max: 300 });
-  }
+  constructor() {}
 
   ngOnInit(): void {}
 
