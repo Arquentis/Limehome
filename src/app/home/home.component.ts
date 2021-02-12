@@ -2,6 +2,8 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  NgZone,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -22,25 +24,31 @@ interface PlaceItem {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('container') listingContainer: ElementRef;
   private loader: Loader;
   private map: google.maps.Map;
   private placesService: google.maps.places.PlacesService;
   private markerIcon = '/assets/images/svg/home-icon.svg';
   private markerIconActive = '/assets/images/svg/home-icon-active.svg';
-  // private markers: google.maps.Marker[] = [];
-  private selectedItem: PlaceItem;
+  selectedItem: PlaceItem;
 
   placeItems: PlaceItem[] = [];
 
-  constructor(private _cdr: ChangeDetectorRef, private _router: Router) {
+  constructor(
+    private _cdr: ChangeDetectorRef,
+    private _router: Router,
+    private _zone: NgZone
+  ) {
     const { googleApiKey } = environment;
     this.loader = new Loader({
       apiKey: googleApiKey,
       version: 'weekly',
       libraries: ['places'],
     });
+  }
+  ngOnDestroy(): void {
+    this.map.unbindAll();
   }
 
   getUserPosition(): Promise<google.maps.LatLng> {
@@ -120,7 +128,9 @@ export class HomeComponent implements OnInit {
         AppConsts.selectedBooking,
         JSON.stringify(selectedBooking)
       );
-      this._router.navigate(['/checkout']);
+      this._zone.run(() => {
+        this._router.navigate(['/checkout']);
+      });
     } else {
       alert('Something went wrong');
     }
@@ -136,11 +146,7 @@ export class HomeComponent implements OnInit {
     });
 
     google.maps.event.addListener(marker, 'click', () => {
-      if (this.selectedItem && this.selectedItem.id === place.place_id) {
-        this.selectPlace(null);
-      } else {
-        this.selectPlace(place.place_id);
-      }
+      this.selectPlace(place.place_id);
     });
     return marker;
   }
@@ -183,7 +189,6 @@ export class HomeComponent implements OnInit {
     });
     if (!this.selectedItem) {
       this.tryGetSelectedBooking();
-      // this.selectPlace(this.placeItems[0].id);
     }
 
     // for (let i = 0; i < this.markers.length; i++) {

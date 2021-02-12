@@ -9,6 +9,7 @@ export class ListItemComponent implements OnInit {
   @Input('item') placeResult: google.maps.places.PlaceResult;
   @Input('amount') amount: number;
   @Input('id') id: string;
+  @Input('isSelected') isSelected: boolean;
   @Output() onBookSelect = new EventEmitter<google.maps.places.PlaceResult>();
 
   constructor() {}

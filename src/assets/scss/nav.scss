@@ -6,7 +6,7 @@
   background-color: #ebeae6;
   position: relative;
 
-  & .nav-logo {
+  .nav-logo {
     display: inline-flex;
     flex: 1;
     padding: 10px 10px;
@@ -14,7 +14,7 @@
       height: 100%;
     }
   }
-  & input {
+  input {
     display: none;
 
     &:checked ~ .nav-links {
@@ -38,34 +38,30 @@
       }
     }
   }
-  & .nav-btn {
+  .nav-btn {
     display: inline-block;
     position: absolute;
     top: 0;
     right: 0;
 
-    & label {
+    label {
       display: inline-block;
       width: 50px;
       height: 50px;
       padding: 15px;
 
-      & span {
+      span {
         display: block;
         width: 25px;
         height: 10px;
         border-top: 2px solid #545453;
       }
     }
-
-    @media (min-width: 600px) {
-      display: none;
-    }
   }
-  & .nav-links {
+  .nav-links {
     display: block;
 
-    & a {
+    a {
       display: inline-block;
       padding: 10px 10px;
       text-decoration: none;
@@ -76,8 +72,20 @@
         background-color: rgba(0, 0, 0, 0.3);
       }
     }
+  }
+}
 
-    @media (max-width: 600px) {
+@media (min-width: 600px) {
+  .nav {
+    .nav-btn {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .nav {
+    .nav-links {
       position: absolute;
       display: block;
       width: 100%;

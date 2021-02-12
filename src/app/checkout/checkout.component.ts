@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppConsts, SelectedBooking } from '../app.consts';
@@ -8,7 +8,7 @@ import { AppConsts, SelectedBooking } from '../app.consts';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, AfterViewInit {
   item: SelectedBooking = null;
   saved: boolean = false;
   bookingForm: FormGroup;
@@ -24,16 +24,22 @@ export class CheckoutComponent implements OnInit {
       emailAddress: ['', [Validators.required, Validators.email]],
     });
   }
-
-  ngOnInit(): void {
-    const data = localStorage.getItem(AppConsts.selectedBooking);
-    if (data) {
-      this.item = JSON.parse(data);
-    }
+  ngAfterViewInit(): void {
     if (!this.item) {
-      console.log('selected booking not found');
       this._router.navigate(['/']);
     }
+  }
+
+  ngOnInit(): void {
+    console.log('1');
+    const data = localStorage.getItem(AppConsts.selectedBooking);
+    console.log('2');
+    if (data) {
+      console.log('3');
+      this.item = JSON.parse(data);
+      console.log('4');
+    }
+    console.log('item', this.item);
     this._cdr.detectChanges();
   }
 
